@@ -1,17 +1,22 @@
 #!/bin/bash
-sudo yum update -y
-sudo yum install epel-release -y
-sudo yum install socat -y
-sudo yum install erlang -y
-sudo yum install wget -y
-cd /tmp/
-wget https://www.rabbitmq.com/releases/rabbitmq-server/v3.6.10/rabbitmq-server-3.6.10-1.el7.noarch.rpm
-sudo rpm --import https://www.rabbitmq.com/rabbitmq-release-signing-key.asc
-sudo rpm -Uvh /tmp/rabbitmq-server-3.6.10-1.el7.noarch.rpm
+#Install RabbitMQ on CentOS 7
+sudo yum -y install epel-release
+sudo yum -y update
+#Install Erlang
+#Download repository
+wget http://packages.erlang-solutions.com/erlang-solutions-1.0-1.noarch.rpm
+#Add repository
+sudo rpm -Uvh erlang-solutions-1.0-1.noarch.rpm
+#Install erlang and dependencies
+sudo yum -y install erlang socat logrotate
+#Install RabbitMQ and Download RabbitMQ package
+wget https://github.com/rabbitmq/rabbitmq-server/releases/download/v3.8.8/rabbitmq-server-3.8.8-1.el6.noarch.rpm
+
+#Add signing key
+sudo rpm --import https://www.rabbitmq.com/rabbitmq-signing-key-public.asc
+#Install rabbitmq-server
+sudo rpm -Uvh rabbitmq-server-3.8.8-1.el6.noarch.rpm
+#Start RabbitMQ
 sudo systemctl start rabbitmq-server
+#Automatically start RabbitMQ at boot time
 sudo systemctl enable rabbitmq-server
-sudo systemctl status rabbitmq-server
-sudo sh -c 'echo "[{rabbit, [{loopback_users, []}]}]." > /etc/rabbitmq/rabbitmq.config'
-sudo rabbitmqctl add_user test test
-sudo rabbitmqctl set_user_tags test administrator
-sudo systemctl restart rabbitmq-server
